@@ -1,79 +1,7 @@
 
-import uuid = require("uuid");
 
-import {RunTaskParams, TaskParams} from "../dtask-node/index";
-
-
-export interface INodeHandle{
-    runTask(params: RunTaskParams, cb: (err: any, ret: Object)=>void): void;
-}
-
-export class DTaskNode{
-    ip: string;
-    concurrency: number;
-    current_task_count = 0;
-    handle: INodeHandle|null;
-    online: boolean;
-    constructor(public id: string, options: {ip: string, concurrency?: number}){
-        this.ip = options.ip;
-        this.concurrency = options.concurrency || 0;
-        this.handle = null;
-        this.online = false;
-    }
-    onconnected(handle: INodeHandle){
-        this.handle = handle;
-        this.online = true;
-    }
-    ondisconnected(){
-        this.online = false;
-        this.handle = null;
-    }
-
-    async runTask(task: DTaskDesc, obj: any): Promise<any>{
-        this.current_task_count++;
-        let ret = await task.run(this, obj);
-        this.current_task_count--;
-        return ret;
-    }
-}
-
-export class DTaskDesc{
-    countMap = new Map<string, number>();
-    constructor(public name: string, public type: string, public params: TaskParams, public concurrenty: number = 0){
-    }
-    async run(node: DTaskNode, obj: any): Promise<any>{
-        let count = this.countMap.get(node.id);
-        if(typeof count === 'undefined'){
-            count = 1;
-        }else{
-            count++;
-        }
-        this.countMap.set(node.id, count);
-        try{
-            let ret = await new Promise<any>((resolve, reject) => {
-                if(node.handle === null){
-                    throw new Error('Schedule task on disconnected node.');
-                }
-                node.handle.runTask({
-                    id: uuid(),
-                    type: this.type,
-                    prog: this.params.prog,
-                    version: this.params.version,
-                    input: obj,
-                }, function(err, ret){
-                    if(err)
-                        reject(err);
-                    else
-                        resolve(ret);
-                })
-            });
-            return ret;
-        } finally {
-            count--;
-            this.countMap.set(node.id, count);
-        }
-    }
-}
+import { DTaskNode, INodeHandle } from './dtask-node';
+import { DTaskDesc, TaskParams } from './dtask-desc';
 
 export interface registerNodeParam{
     id: string;
@@ -134,3 +62,5 @@ export class DTaskManager {
     }
 }
 
+let mgr = new DTaskManager();
+export default mgr;
