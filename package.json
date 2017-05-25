@@ -1,0 +1,28 @@
+{
+  "name": "dtask",
+  "version": "1.0.0",
+  "description": "Distributed task schedule system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@jingli/dnode-api": "^1.0.5",
+    "@jingli/language": "^1.0.0",
+    "@types/express": "^4.0.35",
+    "@types/mocha": "^2.2.41",
+    "@types/uuid": "^2.0.29",
+    "pg": "^6.2.3",
+    "ts-node": "^3.0.2",
+    "typescript": "^2.3.3",
+    "uuid": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.5.1",
+    "chai": "^3.5.0",
+    "express": "^4.15.2",
+    "mocha": "^3.2.0"
+  }
+}

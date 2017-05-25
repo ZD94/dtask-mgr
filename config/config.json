@@ -1,0 +1,23 @@
+{
+  "appName": "${JL_APP_NAME}",
+  "rootDir": "${JL_APP_DATA_DIR}",
+  "listen": "${{rootDir}}/api.sock",
+
+  "workdir": "${{rootDir}}/tmp/workdir",
+
+  "postgres":{
+    "url": "${JL_APP_POSTGRES}",
+    "debug": true
+  },
+  "api": {
+    "debug": true,
+    "remotes": []
+  },
+  "logger": {
+    "path": "${{rootDir}}/log",
+    "prefix": "${{appName}}_"
+  },
+  "shell": {
+    "package_url": "https://l.jingli365.com"
+  }
+}

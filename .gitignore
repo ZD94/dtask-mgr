@@ -1,0 +1,6 @@
+.idea/
+.vscode/
+node_modules/
+log/
+tmp/
+config/config.local.json
