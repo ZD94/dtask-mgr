@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "ES5",
     "downlevelIteration": true,
-    "outDir": "tmp/tsout",
+    "outDir": "dist",
     "module": "commonjs",
     "sourceMap": true,
     "inlineSources": true,
