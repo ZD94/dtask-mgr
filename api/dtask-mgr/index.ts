@@ -58,7 +58,21 @@ export class DTaskManager {
                 nodes.push(node);
             }
         }
-        return null;
+        let pickedCount = Number.MAX_SAFE_INTEGER;
+        let picked: DTaskNode | null = null;
+        for (let node of nodes) {
+            let count = desc.countMap.get(node.ip);
+            if (typeof count === 'undefined' || count == 0) {
+                return node;
+            }
+            if (count == 0)
+                return node;
+            if (count < pickedCount) {
+                pickedCount = count;
+                picked = node;
+            }
+        }
+        return picked;
     }
 }
 

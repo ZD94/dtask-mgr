@@ -19,7 +19,7 @@ export class DTaskDesc{
     constructor(public name: string, public type: string, public params: TaskParams, public concurrenty: number = 0){
     }
     async run(node: DTaskNode, obj: any): Promise<any>{
-        let count = this.countMap.get(node.id);
+        let count = this.countMap.get(node.ip);
         if(typeof count === 'undefined'){
             count = 1;
         }else{
@@ -47,7 +47,7 @@ export class DTaskDesc{
             return ret;
         } finally {
             count--;
-            this.countMap.set(node.id, count);
+            this.countMap.set(node.ip, count);
         }
     }
 }
