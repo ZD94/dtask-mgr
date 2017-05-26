@@ -1,0 +1,63 @@
+
+variables:
+  DOCKER_REG: docker.l.jingli365.com
+  DOCKER_NAME: $CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME
+  DOCKER_CI_NAME: $DOCKER_REG/$CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME:$CI_BUILD_REF
+  DOCKER_BRANCH_NAME: $DOCKER_REG/$CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG
+  NPM_CACHE_DIR: /cache/build-cache/npmhash/
+
+stages:
+  - build
+  - docker
+  - deploy
+
+image: docker:git
+
+before_script:
+  - 'eval $(ssh-agent -s) && echo "$SSH_PRIVATE_KEY">.k && chmod 600 .k && ssh-add .k && rm -f .k'
+  - 'mkdir -p ~/.ssh && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - mkdir -p /cache/build-cache/.npm && ln -s /cache/build-cache/.npm ~/
+
+build:dist:
+  stage: build
+  only:
+    - branches
+  image: $DOCKER_REG/jl-build:v2
+  tags:
+    - serial
+  cache:
+    key: $CI_PIPELINE_ID
+    paths:
+      - dist/
+  script:
+    - mkdir -p $NPM_CACHE_DIR/`npmhash`/node_modules && ln -s $NPM_CACHE_DIR/`npmhash`/node_modules .
+    - echo `npmhash`
+    - git submodule update --init --checkout
+    - npm --registry https://npm.l.jingli365.com install
+    - npm run dist
+
+build:image:
+  stage: docker
+  cache:
+    key: $CI_PIPELINE_ID
+    paths:
+      - dist/
+  script:
+    - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
+    - docker build -t $DOCKER_CI_NAME .
+    - docker push $DOCKER_CI_NAME
+
+deploy:master:
+  stage: deploy
+  only:
+    - /^master$/
+  environment:
+    name: dev
+    url: https://l.jingli365.com
+  script:
+    - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
+    - docker pull $DOCKER_CI_NAME
+    - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
+    - docker push $DOCKER_BRANCH_NAME
+    - echo deploy to https://l.jingli365.com
+    - ssh test@l.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_BUILD_REF_SLUG
