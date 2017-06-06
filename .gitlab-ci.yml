@@ -56,7 +56,7 @@ deploy:master:
     url: https://l.jingli365.com
   variables:
     JL_APP_COMMAND: node main.js
-    JL_APP_SKIP_WAIT_INIT: true
+    JL_APP_SKIP_WAIT_INIT: "true"
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
