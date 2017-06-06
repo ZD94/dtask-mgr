@@ -1,7 +1,7 @@
 {
   "appName": "${JL_APP_NAME}",
   "rootDir": "${JL_APP_DATA_DIR}",
-  "listen": "${{rootDir}}/api.sock",
+  "listen": "4000",
 
   "workdir": "${{rootDir}}/tmp/workdir",
 
