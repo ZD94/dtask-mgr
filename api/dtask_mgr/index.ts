@@ -3,6 +3,8 @@
 import { DTaskNode, INodeHandle } from './dtask-node';
 import { DTaskDesc, TaskParams } from './dtask-desc';
 
+let config = require('@jingli/config');
+
 export interface registerNodeParam{
     id: string;
     ip: string;
@@ -78,3 +80,17 @@ export class DTaskManager {
 
 let mgr = new DTaskManager();
 export default mgr;
+
+for (let name in config.tasks) {
+    let desc = config.tasks[name];
+
+    mgr.registerTask({
+        name,
+        concurrency: desc.concurrency,
+        type: desc.type,
+        options: {
+            prog: desc.prog,
+            version: desc.version,
+        }
+    });
+}
