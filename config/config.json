@@ -22,43 +22,43 @@
       "type": "docker",
       "concurrency": 2,
       "prog": "docker.l.jingli365.com/dtasks-dtask-ctrip-train-domestic",
-      "version": "release"
+      "version": "master"
     },
     "ctrip-hotel-abroad": {
       "type": "docker",
       "concurrency": 2,
       "prog": "docker.l.jingli365.com/dtasks-dtask-ctrip-hotel-abroad",
-      "version": "release"
+      "version": "master"
     },
     "ctrip-eurorail": {
       "type": "docker",
       "concurrency": 2,
       "prog": "docker.l.jingli365.com/dtasks-dtask-ctrip-eurorail",
-      "version": "release"
+      "version": "master"
     },
     "ctrip-flight-abroad": {
       "type": "docker",
       "concurrency": 2,
       "prog": "docker.l.jingli365.com/dtasks-dtask-ctrip-flight-abroad",
-      "version": "release"
+      "version": "master"
     },
     "ctrip-flight-domestic": {
       "type": "docker",
       "concurrency": 2,
       "prog": "docker.l.jingli365.com/dtasks-dtask-ctrip-flight-domestic",
-      "version": "release"
+      "version": "master"
     },
     "qunar-train-domestic": {
       "type": "docker",
       "concurrency": 2,
       "prog": "docker.l.jingli365.com/dtasks-dtask-qunar-train-domestic",
-      "version": "release"
+      "version": "master"
     },
     "ctrip-hotel-domestic": {
       "type": "docker",
       "concurrency": 2,
       "prog": "docker.l.jingli365.com/dtasks-dtask-ctrip-hotel-domestic",
-      "version": "release"
+      "version": "master"
     }
   }
 }
