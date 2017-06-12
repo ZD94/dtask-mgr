@@ -4,7 +4,7 @@
   "description": "Distributed task schedule system",
   "main": "server.js",
   "scripts": {
-    "dist": "tsc && mkdir -p dist/config && cp package.json dist/ && cp config/config.json dist/config/ && cp dist/main.js dist/server.js",
+    "dist": "tsc && mkdir -p dist/config && cp package.json dist/ && cp config/config.json dist/config/",
     "clean": "rm -rf dist; rm -rf tmp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
