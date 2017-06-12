@@ -45,7 +45,7 @@ export class DTaskManager {
         if(!desc){
             throw new Error('Task is not defined: '+params.name);
         }
-        let node = this.pickNode(desc);
+        let node = await this.pickNode(desc);
         if(!node){
             throw new Error('No available node for task: '+params.name);
         }
@@ -54,8 +54,10 @@ export class DTaskManager {
     private pickNode(desc: DTaskDesc): DTaskNode|null{
         let nodes = [] as DTaskNode[];
         for(let [_, node] of this.nodes){
-            if(node.current_task_count == 0)
+            console.log(node)
+            if(node.current_task_count == 0) {
                 return node;
+            }
             if(node.concurrency == 0 || node.current_task_count < node.concurrency){
                 nodes.push(node);
             }
