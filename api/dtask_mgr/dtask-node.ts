@@ -28,8 +28,11 @@ export class DTaskNode{
 
     async runTask(task: DTaskDesc, obj: any): Promise<any>{
         this.current_task_count++;
-        let ret = await task.run(this, obj);
-        this.current_task_count--;
-        return ret;
+        try {
+            let ret = await task.run(this, obj);
+            return ret;
+        } finally {
+            this.current_task_count--;
+        }
     }
 }
