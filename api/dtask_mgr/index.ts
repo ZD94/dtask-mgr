@@ -76,6 +76,7 @@ export class DTaskManager {
             if (count < pickedCount) {
                 pickedCount = count;
                 picked = node;
+                break;
             }
         }
         return picked;
