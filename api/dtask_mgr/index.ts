@@ -56,15 +56,14 @@ export class DTaskManager {
             throw new Error('Task is not defined: '+params.name);
         }
         let node = await this.pickNode(desc);
-        console.log("选中的节点:", node);
+        // console.log("选中的节点:", node);
         if(!node){
             throw new Error('No available node for task: '+params.name);
         }
         return node.runTask(desc, params.input);
     }
     private pickNode(desc: DTaskDesc): DTaskNode|null{
-        console.log("总节点数:", this.nodes)
-
+        // console.log("总节点数:", this.nodes)
         let nodes = [] as DTaskNode[];
 
         for(let [_, node] of this.nodes){
