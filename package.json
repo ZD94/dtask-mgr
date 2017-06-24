@@ -1,7 +1,11 @@
 {
-  "name": "dtask",
+  "name": "dtask-mgr",
   "version": "1.0.0",
   "description": "Distributed task schedule system",
+  "repository": {
+    "type": "git",
+    "url": "git@git.l.jingli365.com:svr/dtask-mgr.git"
+  },
   "main": "server.js",
   "scripts": {
     "dist": "tsc && mkdir -p dist/config && cp package.json dist/ && cp config/config.json dist/config/",
