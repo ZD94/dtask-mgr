@@ -33,6 +33,7 @@ export class DTaskManager {
         }
         node.onconnected(params.handle);
     }
+
     registerTask(params: registerTaskParam){
         if(this.tasks.has(params.name)) {
             throw new Error('Task name duplication');
@@ -40,27 +41,37 @@ export class DTaskManager {
         let desc = new DTaskDesc(params.name, params.type, params.options, params.concurrency);
         this.tasks.set(desc.name, desc);
     }
+
+    //刷新注册的node
+    refreshNode(params: {id: string, refreshAt: number}) {
+        let node = this.nodes.get(params.id);
+        if (!node)
+            return;
+        node.refreshAt = params.refreshAt;
+    }
+
     async runTask(params: {name: string, input: any}): Promise<any>{
         let desc = this.tasks.get(params.name);
         if(!desc){
             throw new Error('Task is not defined: '+params.name);
         }
         let node = await this.pickNode(desc);
-        console.log("选中的节点:", node);
+        // console.log("选中的节点:", node);
         if(!node){
             throw new Error('No available node for task: '+params.name);
         }
         return node.runTask(desc, params.input);
     }
     private pickNode(desc: DTaskDesc): DTaskNode|null{
-        console.log("总节点数:", this.nodes)
+        // console.log("总节点数:", this.nodes)
         let nodes = [] as DTaskNode[];
+
         for(let [_, node] of this.nodes){
-            console.log(node)
-            if(node.current_task_count == 0) {
+            if(node.online && node.current_task_count == 0) {
                 return node;
             }
-            if(node.concurrency == 0 || node.current_task_count < node.concurrency){
+
+            if(node.online && (node.concurrency == 0 || node.current_task_count < node.concurrency)){
                 nodes.push(node);
             }
         }
