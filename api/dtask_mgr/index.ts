@@ -64,33 +64,31 @@ export class DTaskManager {
     }
     private pickNode(desc: DTaskDesc): DTaskNode|null{
         // console.log("总节点数:", this.nodes)
-        let nodes = [] as DTaskNode[];
-
-        for(let [_, node] of this.nodes){
-            if(node.online && node.current_task_count == 0) {
-                return node;
-            }
-
-            if(node.online && (node.concurrency == 0 || node.current_task_count < node.concurrency)){
-                nodes.push(node);
-            }
-        }
         let pickedCount = Number.MAX_SAFE_INTEGER;
-        let picked: DTaskNode | null = null;
-        for (let node of nodes) {
-            let count = desc.countMap.get(node.ip);
-            if (typeof count === 'undefined' || count == 0) {
-                return node;
+        let picked = [] as DTaskNode[];
+        for (let [_, node] of this.nodes) {
+            if (!node.online) {
+                continue;
             }
-            if (count == 0)
-                return node;
+            if (node.concurrency != 0 && node.current_task_count >= node.concurrency) {
+                continue;
+            }
+            let count = desc.countMap.get(node.ip);
+            if (typeof count === 'undefined') {
+                count = 0;
+                desc.countMap.set(node.ip, count);
+            }
             if (count < pickedCount) {
                 pickedCount = count;
-                picked = node;
-                break;
+                picked = [node];
+            } else if (count == pickedCount) {
+                picked.push(node);
             }
         }
-        return picked;
+        if (pickedCount >= desc.concurrenty)
+            return null;
+        let rand = Math.floor(Math.random() * picked.length) + 1;
+        return picked[rand];
     }
 }
 
