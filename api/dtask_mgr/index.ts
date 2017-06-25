@@ -73,11 +73,7 @@ export class DTaskManager {
             if (node.concurrency != 0 && node.current_task_count >= node.concurrency) {
                 continue;
             }
-            let count = desc.countMap.get(node.ip);
-            if (typeof count === 'undefined') {
-                count = 0;
-                desc.countMap.set(node.ip, count);
-            }
+            let count = desc.getCurrentCountForIp(node.ip);
             if (count < pickedCount) {
                 pickedCount = count;
                 picked = [node];

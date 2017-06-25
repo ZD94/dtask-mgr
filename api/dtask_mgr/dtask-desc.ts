@@ -16,7 +16,19 @@ export interface RunTaskParams extends TaskParams{
 
 export class DTaskDesc{
     countMap = new Map<string, number>();
-    constructor(public name: string, public type: string, public params: TaskParams, public concurrenty: number = 0){
+    bannedMap = new Map<string, number>();
+    constructor(
+        public name: string,
+        public type: string,
+        public params: TaskParams,
+        public concurrenty: number = 0,
+        private ban_ip_time: number = 2*60,
+    ) {
+    }
+    getCurrentCountForIp(ip: string): number{
+        if (this.isBannedIP(ip))
+            return Infinity;
+        return this.countMap.get(ip) || 0;
     }
     async run(node: DTaskNode, obj: any): Promise<any>{
         let count = this.countMap.get(node.ip);
@@ -37,11 +49,12 @@ export class DTaskDesc{
                     prog: this.params.prog,
                     version: this.params.version,
                     input: obj,
-                }, function(err, ret){
-                    if(err)
-                        reject(err);
-                    else
-                        resolve(ret);
+                }, (err, ret) => {
+                    if(!err)
+                        return resolve(ret);
+                    if (err.code == 403)
+                        this.banIpForNode(node);
+                    reject(err);
                 })
             });
             return ret;
@@ -49,5 +62,21 @@ export class DTaskDesc{
             count--;
             this.countMap.set(node.ip, count);
         }
+    }
+    banIpForNode(node: DTaskNode) {
+        let banTime = Date.now() + this.ban_ip_time * 60 * 1000;
+        this.bannedMap.set(node.ip, banTime);
+    }
+    isBannedIP(ip: string) {
+        let bannedTime = this.bannedMap.get(ip);
+        if (!bannedTime) {
+            return false;
+        }
+        let now = Date.now();
+        if (now > bannedTime) {
+            this.bannedMap.delete(ip);
+            return false;
+        }
+        return true;
     }
 }
