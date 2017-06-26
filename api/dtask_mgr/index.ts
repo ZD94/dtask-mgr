@@ -2,7 +2,8 @@
 
 import { DTaskNode, INodeHandle } from './dtask-node';
 import { DTaskDesc, TaskParams } from './dtask-desc';
-
+import Logger from "@jingli/logger";
+var logger = new Logger("dtask-mgr");
 let config = require('@jingli/config');
 
 export interface registerNodeParam{
@@ -62,7 +63,7 @@ export class DTaskManager {
         }
         return node.runTask(desc, params.input);
     }
-    
+
     private pickNode(desc: DTaskDesc): DTaskNode|null{
         // console.log("总节点数:", this.nodes)
         let pickedCount = Number.MAX_SAFE_INTEGER;
@@ -70,6 +71,7 @@ export class DTaskManager {
         if (this.nodes.size > 100) {
             this.cleanNodeMap();
         }
+        logger.info("总节点数:", this.nodes.size);
         for (let [_, node] of this.nodes) {
             if (!node.online) {
                 continue;
@@ -88,6 +90,7 @@ export class DTaskManager {
         if (pickedCount >= desc.concurrenty)
             return null;
         let rand = Math.floor(Math.random() * picked.length) + 1;
+        logger.info("选中的节点:", this.nodes);
         return picked[rand];
     }
 
