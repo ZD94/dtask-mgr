@@ -90,7 +90,7 @@ export class DTaskManager {
         if (pickedCount >= desc.concurrenty)
             return null;
         let rand = Math.floor(Math.random() * picked.length) + 1;
-        logger.info("选中的节点:", this.nodes);
+        logger.info("选中的节点:", picked[rand]);
         return picked[rand];
     }
 
