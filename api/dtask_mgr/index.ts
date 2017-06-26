@@ -71,6 +71,12 @@ export class DTaskManager {
                 return node;
             }
 
+            //删除掉不在线的
+            if (!node.online) {
+                this.nodes.delete(node.id);
+                continue;
+            }
+
             if(node.online && (node.concurrency == 0 || node.current_task_count < node.concurrency)){
                 nodes.push(node);
             }
