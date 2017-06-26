@@ -62,10 +62,14 @@ export class DTaskManager {
         }
         return node.runTask(desc, params.input);
     }
+    
     private pickNode(desc: DTaskDesc): DTaskNode|null{
         // console.log("总节点数:", this.nodes)
         let pickedCount = Number.MAX_SAFE_INTEGER;
         let picked = [] as DTaskNode[];
+        if (this.nodes.size > 100) {
+            this.cleanNodeMap();
+        }
         for (let [_, node] of this.nodes) {
             if (!node.online) {
                 continue;
@@ -85,6 +89,14 @@ export class DTaskManager {
             return null;
         let rand = Math.floor(Math.random() * picked.length) + 1;
         return picked[rand];
+    }
+
+    private cleanNodeMap() {
+        for(let [key, node] of this.nodes) {
+            if (!node.online) {
+                this.nodes.delete(key);
+            }
+        }
     }
 }
 
