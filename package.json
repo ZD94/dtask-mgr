@@ -16,7 +16,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@jingli/config": "^1.0.6",
-    "@jingli/dnode-api": "^1.1.4",
+    "@jingli/dnode-api": "^1.1.6",
     "@jingli/language": "^1.0.0",
     "@types/express": "^4.0.35",
     "@types/mocha": "^2.2.41",
