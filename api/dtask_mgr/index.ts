@@ -71,11 +71,12 @@ export class DTaskManager {
         if (this.nodes.size > 100) {
             this.cleanNodeMap();
         }
-        logger.info("总节点数:", this.nodes.size);
+        let onlineNum:number = 0;
         for (let [_, node] of this.nodes) {
             if (!node.online) {
                 continue;
             }
+            onlineNum++;            
             if (node.concurrency != 0 && node.current_task_count >= node.concurrency) {
                 continue;
             }
@@ -90,7 +91,9 @@ export class DTaskManager {
         if (pickedCount >= desc.concurrenty)
             return null;
         let rand = Math.floor(Math.random() * picked.length);
-        logger.info("选中的节点:", picked[rand]);
+        logger.info("总节点数:", onlineNum, "可用数:", picked.length);
+        logger.info("选中的节点:", picked[rand].id, '任务名称:', desc.name);
+        logger.info("任务参数:", JSON.stringify(desc.params))
         return picked[rand];
     }
 
