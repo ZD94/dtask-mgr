@@ -20,43 +20,43 @@
   "tasks": {
     "ctrip-flight-abroad": {
       "type": "docker",
-      "concurrency": 2,
+      "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-flight-abroad",
       "version": "master"
     },
     "ctrip-flight-domestic": {
       "type": "docker",
-      "concurrency": 2,
+      "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-flight-domestic",
       "version": "master"
     },
     "ctrip-hotel-abroad": {
       "type": "docker",
-      "concurrency": 2,
+      "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-hotel-abroad",
       "version": "master"
     },
     "ctrip-hotel-domestic": {
       "type": "docker",
-      "concurrency": 2,
+      "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-hotel-domestic",
       "version": "master"
     },
     "ctrip-train-eurorail": {
       "type": "docker",
-      "concurrency": 2,
+      "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-train-eurorail",
       "version": "master"
     },
     "ctrip-train-domestic": {
       "type": "docker",
-      "concurrency": 2,
+      "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-train-domestic",
       "version": "master"
     },
     "qunar-train-domestic": {
       "type": "docker",
-      "concurrency": 2,
+      "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-qunar-train-domestic",
       "version": "master"
     }

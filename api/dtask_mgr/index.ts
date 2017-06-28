@@ -56,15 +56,30 @@ export class DTaskManager {
         if(!desc){
             throw new Error('Task is not defined: '+params.name);
         }
-        let node = await this.pickNode(desc);
-        // console.log("选中的节点:", node);
+        let node;
+        try {
+            //返回结果可能是这个:ZoneAwarePromise { __zone_symbol__state: null, __zone_symbol__value: [] }
+            node = await this.pickNode(desc);
+        } catch(err) {
+            node = null;
+        }
         if(!node){
             throw new Error('No available node for task: '+params.name);
         }
-        return node.runTask(desc, params.input);
+        let ret;
+        try {
+            logger.info('任务名称:', params.name);
+            logger.info("任务参数:", JSON.stringify(desc.params))
+            logger.info("任务输入:", JSON.stringify(params.input));
+            ret = await node.runTask(desc, params.input);
+        } catch (err) { 
+            logger.error(err.stack ? err.stack : err);
+            throw err;
+        }
+        return ret;
     }
 
-    private pickNode(desc: DTaskDesc): DTaskNode|null{
+    private async pickNode(desc: DTaskDesc): Promise<DTaskNode|null>{
         // console.log("总节点数:", this.nodes)
         let pickedCount = Number.MAX_SAFE_INTEGER;
         let picked = [] as DTaskNode[];
@@ -76,7 +91,7 @@ export class DTaskManager {
             if (!node.online) {
                 continue;
             }
-            onlineNum++;            
+            onlineNum++;
             if (node.concurrency != 0 && node.current_task_count >= node.concurrency) {
                 continue;
             }
@@ -88,12 +103,13 @@ export class DTaskManager {
                 picked.push(node);
             }
         }
+
         if (pickedCount >= desc.concurrenty)
             return null;
+
         let rand = Math.floor(Math.random() * picked.length);
         logger.info("总节点数:", onlineNum, "可用数:", picked.length);
-        logger.info("选中的节点:", picked[rand].id, '任务名称:', desc.name);
-        logger.info("任务参数:", JSON.stringify(desc.params))
+        logger.info("选中的节点:", picked[rand].id);
         return picked[rand];
     }
 
