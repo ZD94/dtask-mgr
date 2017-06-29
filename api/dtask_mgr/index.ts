@@ -118,8 +118,13 @@ export class DTaskManager {
         }
         logger.info(`Nodes: online(${onlineNum}), idle(${picked.length}@${pickedCount})`);
         if(picked.length == 0) {
+            logger.info('Node task status:')
             for(let [_, _node] of this.nodes) {
                 logger.info('节点：', _node.ip, _node.current_task_count);
+            }
+            logger.info('IP task status:');
+            for(let [ip, count] of desc.countMap){
+                logger.info('IP：', ip, count);
             }
             return null;
         }
