@@ -21,7 +21,7 @@ export class DTaskDesc{
         public name: string,
         public type: string,
         public params: TaskParams,
-        public concurrenty: number = 0,
+        public concurrency: number = 0,
         private ban_ip_time: number = 2*60,
     ) {
     }

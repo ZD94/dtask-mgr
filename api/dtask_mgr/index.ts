@@ -112,13 +112,17 @@ export class DTaskManager {
             }
         }
 
-        if (pickedCount >= desc.concurrenty) {
+        if (pickedCount >= desc.concurrency) {
             pickedCount = Infinity;
             picked = [];
         }
         logger.info(`Nodes: online(${onlineNum}), idle(${picked.length}@${pickedCount})`);
-        if(picked.length == 0)
+        if(picked.length == 0) {
+            for(let [_, _node] of this.nodes) {
+                logger.info('节点：', _node.ip, _node.current_task_count);
+            }
             return null;
+        }
 
         let rand = Math.floor(Math.random() * picked.length);
         return picked[rand];
