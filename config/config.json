@@ -20,13 +20,13 @@
   "tasks": {
     "ctrip-flight-abroad": {
       "type": "docker",
-      "concurrency": 3,
+      "concurrency": 1,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-flight-abroad",
       "version": "master"
     },
     "ctrip-flight-domestic": {
       "type": "docker",
-      "concurrency": 3,
+      "concurrency": 1,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-flight-domestic",
       "version": "master"
     },
@@ -58,6 +58,12 @@
       "type": "docker",
       "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-qunar-train-domestic",
+      "version": "master"
+    },
+    "skyscanner-flight": {
+      "type": "docker",
+      "concurrency": 1,
+      "prog": "docker.l.jingli365.com/dtasks-skyscanner-flight-abroad",
       "version": "master"
     }
   }
