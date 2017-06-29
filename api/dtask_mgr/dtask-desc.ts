@@ -33,7 +33,7 @@ export class DTaskDesc{
     async run(node: DTaskNode, obj: any): Promise<any>{
         let count = this.countMap.get(node.ip) || 0;
         count++;
-        this.countMap.set(node.id, count);
+        this.countMap.set(node.ip, count);
         try{
             let ret = await new Promise<any>((resolve, reject) => {
                 if(node.handle === null){
