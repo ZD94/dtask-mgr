@@ -5,7 +5,7 @@ variables:
   DOCKER_BRANCH_NAME: $DOCKER_REG/$CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG
   NPM_CACHE_DIR: /cache/build-cache/npmhash/
   JL_APP_DAEMON: "true"
-  JL_APP_COMMAND: "node --max_old_space_size=4092 main.js >/data/log/nohup.out 2>&1"
+  JL_APP_COMMAND: "node --max_old_space_size=4092 main.js -d >/data/log/nohup.out 2>&1"
 
 stages:
   - build
