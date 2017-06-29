@@ -1,6 +1,9 @@
 
 import { DTaskDesc, RunTaskParams } from './dtask-desc';
 
+import Logger from "@jingli/logger";
+var logger = new Logger("dtask-mgr.node");
+
 export interface PingResponse {
     pongAt: number;
 }
@@ -26,7 +29,8 @@ export class DTaskNode{
         this.online = false;
     }
 
-    onconnected(handle: INodeHandle){
+    onconnected(handle: INodeHandle) {
+        logger.info(`Node[${this.id}] connected, ip:`, this.ip);
         this.handle = handle;
         this.online = true;
         this.refreshAt = Date.now();
@@ -37,8 +41,9 @@ export class DTaskNode{
             }
         }, 30 * 1000);
     }
-    
+
     ondisconnected(){
+        logger.warn(`Node[${this.id}] disconnected, ip:`, this.ip);
         if (this.refreshTimer) {
             clearInterval(this.refreshTimer);
         }

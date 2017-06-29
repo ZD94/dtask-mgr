@@ -1,5 +1,5 @@
 
-
+import * as net from 'net';
 import { DTaskNode, INodeHandle } from './dtask-node';
 import { DTaskDesc, TaskParams } from './dtask-desc';
 import Logger from "@jingli/logger";
@@ -24,15 +24,22 @@ export class DTaskManager {
     private tasks = new Map<string, DTaskDesc>();
 
     registerNode(params: registerNodeParam){
-        let node = this.nodes.get(params.id);
-        if(!node){
-            node = new DTaskNode(params.id, {
+        let node_ = this.nodes.get(params.id);
+        if (!node_){
+            node_ = new DTaskNode(params.id, {
                 ip: params.ip,
                 concurrency: params.concurrency,
             });
-            this.nodes.set(node.id, node);
+            this.nodes.set(node_.id, node_);
         }
+        const node = node_;
+        node.ip = params.ip;
+        node.concurrency = params.concurrency;
         node.onconnected(params.handle);
+        let sock = <net.Socket>Zone.current.get('stream');
+        sock.on('close', () => {
+            node.ondisconnected();
+        });
     }
 
     registerTask(params: registerTaskParam){
@@ -76,7 +83,7 @@ export class DTaskManager {
             if (!node.online) {
                 continue;
             }
-            onlineNum++;            
+            onlineNum++;
             if (node.concurrency != 0 && node.current_task_count >= node.concurrency) {
                 continue;
             }
