@@ -31,6 +31,10 @@ if (process.argv[2] == '-d') {
     });
     child.start();
 } else {
+    setInterval(() => {
+        logger.log('MemoryUsage:', JSON.stringify(process.memoryUsage()));
+    }, 5* 60 * 1000)
+
     zone.forkStackTrace()
         .run(async function(){
             await API.initSql(path.join(__dirname, 'api'), config.api);
