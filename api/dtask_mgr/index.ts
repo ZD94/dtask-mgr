@@ -88,12 +88,15 @@ export class DTaskManager {
         // console.log("总节点数:", this.nodes)
         let pickedCount = Number.MAX_SAFE_INTEGER;
         let picked = [] as DTaskNode[];
-        if (this.nodes.size > 100) {
-            this.cleanNodeMap();
-        }
+
         let onlineNum:number = 0;
         for (let [_, node] of this.nodes) {
             if (!node.online) {
+                continue;
+            }
+            if (!node.refreshAt || node.refreshAt + 60 * 1000 < new Date().valueOf()) {
+                node.online = false;
+                logger.info(`节点:${node.id}可能已经掉线`)
                 continue;
             }
             onlineNum++;
@@ -119,14 +122,6 @@ export class DTaskManager {
 
         let rand = Math.floor(Math.random() * picked.length);
         return picked[rand];
-    }
-
-    private cleanNodeMap() {
-        for(let [key, node] of this.nodes) {
-            if (!node.online) {
-                this.nodes.delete(key);
-            }
-        }
     }
 }
 
