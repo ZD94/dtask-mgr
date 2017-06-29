@@ -20,7 +20,6 @@ export class DTaskNode{
     handle: INodeHandle|null;
     online: boolean;
     refreshAt?: number;
-    private refreshTimer: any;
 
     constructor(public id: string, options: {ip: string, concurrency?: number}){
         this.ip = options.ip;
@@ -34,19 +33,10 @@ export class DTaskNode{
         this.handle = handle;
         this.online = true;
         this.refreshAt = Date.now();
-        this.refreshTimer = setInterval( ()=> {
-            if (!this.refreshAt || this.refreshAt + 60 * 1000 < Date.now()) {
-                console.warn(`node-`, this.id,`可能已经掉线`);
-                this.ondisconnected();
-            }
-        }, 30 * 1000);
     }
 
     ondisconnected(){
         logger.warn(`Node[${this.id}] disconnected, ip:`, this.ip);
-        if (this.refreshTimer) {
-            clearInterval(this.refreshTimer);
-        }
         this.online = false;
         this.handle = null;
     }
