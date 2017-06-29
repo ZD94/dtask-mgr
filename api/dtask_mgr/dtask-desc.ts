@@ -31,12 +31,8 @@ export class DTaskDesc{
         return this.countMap.get(ip) || 0;
     }
     async run(node: DTaskNode, obj: any): Promise<any>{
-        let count = this.countMap.get(node.ip);
-        if(typeof count === 'undefined'){
-            count = 1;
-        }else{
-            count++;
-        }
+        let count = this.countMap.get(node.ip) || 0;
+        count++;
         this.countMap.set(node.id, count);
         try{
             let ret = await new Promise<any>((resolve, reject) => {
@@ -59,8 +55,12 @@ export class DTaskDesc{
             });
             return ret;
         } finally {
+            let count = this.countMap.get(node.ip) || 0;
             count--;
-            this.countMap.set(node.ip, count);
+            if (count > 0)
+                this.countMap.set(node.ip, count);
+            else if (count == 0)
+                this.countMap.delete(node.ip);
         }
     }
     banIpForNode(node: DTaskNode) {
