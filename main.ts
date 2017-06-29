@@ -1,5 +1,9 @@
 
 import * as path from 'path';
+import Bluebird = require('bluebird');
+Bluebird.config({ warnings: false });
+global.Promise = Bluebird;
+
 let config = require('@jingli/config');
 import API from '@jingli/dnode-api';
 import Logger from '@jingli/logger';
@@ -27,6 +31,10 @@ if (process.argv[2] == '-d') {
     });
     child.start();
 } else {
+    setInterval(() => {
+        logger.log('MemoryUsage:', JSON.stringify(process.memoryUsage()));
+    }, 5* 60 * 1000)
+
     zone.forkStackTrace()
         .run(async function(){
             await API.initSql(path.join(__dirname, 'api'), config.api);
