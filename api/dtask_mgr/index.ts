@@ -60,30 +60,28 @@ export class DTaskManager {
 
     async runTask(params: {name: string, input: any}): Promise<any>{
         let desc = this.tasks.get(params.name);
-        if(!desc){
-            throw new Error('Task is not defined: '+params.name);
-        }
-        let node;
-        try {
-            //返回结果可能是这个:ZoneAwarePromise { __zone_symbol__state: null, __zone_symbol__value: [] }
-            node = await this.pickNode(desc);
-        } catch(err) {
-            node = null;
-        }
-        if(!node){
-            throw new Error('No available node for task: '+params.name);
-        }
+        logger.info(`Task: ${params.name}(${desc?JSON.stringify(desc.params):'null'})`);
+        logger.info("Task input:", JSON.stringify(params.input));
         let ret;
         try {
-            logger.info('任务名称:', params.name);
-            logger.info("任务参数:", JSON.stringify(desc.params))
-            logger.info("任务输入:", JSON.stringify(params.input));
+            if(!desc){
+                throw new Error('Task is not defined: '+params.name);
+            }
+            let node = await this.pickNode(desc);
+            if(!node){
+                throw new Error('No available node for task: '+params.name);
+            }
             ret = await node.runTask(desc, params.input);
-        } catch (err) { 
-            logger.error(err.stack ? err.stack : err);
-            throw err;
+            return ret;
+
+        } catch (e) {
+            logger.error('Task exception:', e.stack ? e.stack : e);
+            throw e;
+        } finally {
+            if (ret) {
+                logger.info('Task output:', JSON.stringify(ret, null, '  '));
+            }
         }
-        return ret;
     }
 
     private async pickNode(desc: DTaskDesc): Promise<DTaskNode|null>{
@@ -111,12 +109,15 @@ export class DTaskManager {
             }
         }
 
-        if (pickedCount >= desc.concurrenty)
+        if (pickedCount >= desc.concurrenty) {
+            pickedCount = Infinity;
+            picked = [];
+        }
+        logger.info(`Nodes: online(${onlineNum}), idle(${picked.length}@${pickedCount})`);
+        if(picked.length == 0)
             return null;
 
         let rand = Math.floor(Math.random() * picked.length);
-        logger.info("总节点数:", onlineNum, "可用数:", picked.length);
-        logger.info("选中的节点:", picked[rand].id);
         return picked[rand];
     }
 

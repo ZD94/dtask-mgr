@@ -1,5 +1,9 @@
 
 import * as path from 'path';
+import Bluebird = require('bluebird');
+Bluebird.config({ warnings: false });
+global.Promise = Bluebird;
+
 let config = require('@jingli/config');
 import API from '@jingli/dnode-api';
 import Logger from '@jingli/logger';
