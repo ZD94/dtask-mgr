@@ -126,6 +126,9 @@ export class DTaskManager {
             for(let [ip, count] of desc.countMap){
                 logger.info('IP：', ip, count);
             }
+            for(let [ip, val] of desc.bannedMap) {
+                logger.info("BannedIp:", ip, val);
+            }
             return null;
         }
 
