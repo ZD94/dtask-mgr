@@ -14,9 +14,15 @@ export interface RunTaskParams extends TaskParams{
     input: Object;
 }
 
+export interface IPStat{
+    running: number;
+    banUntil: number;
+    lastRun: number;
+}
+
 export class DTaskDesc{
-    countMap = new Map<string, number>();
-    bannedMap = new Map<string, number>();
+    statMap = new Map<string, IPStat>();
+
     constructor(
         public name: string,
         public type: string,
@@ -25,15 +31,28 @@ export class DTaskDesc{
         private ban_ip_time: number = 2*60,
     ) {
     }
+    getIpStat(ip: string): IPStat {
+        let stat = this.statMap.get(ip);
+        if(!stat){
+            stat = {
+                running: 0,
+                banUntil: 0,
+                lastRun: 0,
+            }
+            this.statMap.set(ip, stat);
+        }
+        return stat;
+    }
     getCurrentCountForIp(ip: string): number{
+        let stat = this.getIpStat(ip);
         if (this.isBannedIP(ip))
             return Infinity;
-        return this.countMap.get(ip) || 0;
+        return stat.running;
     }
     async run(node: DTaskNode, obj: any): Promise<any>{
-        let count = this.countMap.get(node.ip) || 0;
-        count++;
-        this.countMap.set(node.ip, count);
+        let stat = this.getIpStat(node.ip);
+        stat.running++;
+        stat.lastRun = Date.now();
         try{
             let ret = await new Promise<any>((resolve, reject) => {
                 if(node.handle === null){
@@ -55,26 +74,18 @@ export class DTaskDesc{
             });
             return ret;
         } finally {
-            let count = this.countMap.get(node.ip) || 0;
-            count--;
-            if (count > 0)
-                this.countMap.set(node.ip, count);
-            else if (count == 0)
-                this.countMap.delete(node.ip);
+            stat.running--;
         }
     }
     banIpForNode(node: DTaskNode) {
+        let stat = this.getIpStat(node.ip);
         let banTime = Date.now() + this.ban_ip_time * 60 * 1000;
-        this.bannedMap.set(node.ip, banTime);
+        stat.banUntil = banTime;
     }
     isBannedIP(ip: string) {
-        let bannedTime = this.bannedMap.get(ip);
-        if (!bannedTime) {
-            return false;
-        }
-        let now = Date.now();
-        if (now > bannedTime) {
-            this.bannedMap.delete(ip);
+        let stat = this.getIpStat(ip);
+        if (Date.now() > stat.banUntil) {
+            stat.banUntil = 0;
             return false;
         }
         return true;

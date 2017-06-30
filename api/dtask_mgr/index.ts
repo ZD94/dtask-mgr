@@ -62,31 +62,34 @@ export class DTaskManager {
         let desc = this.tasks.get(params.name);
         logger.info(`Task: ${params.name}(${desc?JSON.stringify(desc.params):'null'})`);
         logger.info("Task input:", JSON.stringify(params.input));
-        let ret;
-        try {
-            if(!desc){
-                throw new Error('Task is not defined: '+params.name);
-            }
-            let node = await this.pickNode(desc);
-            if(!node){
-                throw new Error('No available node for task: '+params.name);
-            }
-            ret = await node.runTask(desc, params.input);
-            return ret;
-
-        } catch (e) {
-            logger.error('Task exception:', e.stack ? e.stack : e);
-            throw e;
-        } finally {
-            if (ret) {
-                logger.info('Task output:', JSON.stringify(ret, null, '  '));
+        const RETRY_COUNT = 2;
+        for(let retry=0; retry<=RETRY_COUNT; retry++){
+            let ret;
+            try {
+                if(!desc){
+                    throw new Error('Task is not defined: '+params.name);
+                }
+                let node = await this.pickNode(desc);
+                if(!node){
+                    throw new Error('No available node for task: '+params.name);
+                }
+                ret = await node.runTask(desc, params.input);
+                return ret;
+            } catch (e) {
+                logger.error('Task exception:', e.stack ? e.stack : e);
+                if(e.code != 403 || retry == RETRY_COUNT)
+                    throw e;
+            } finally {
+                if (ret) {
+                    logger.info('Task output:', JSON.stringify(ret, null, '  '));
+                }
             }
         }
     }
 
     private async pickNode(desc: DTaskDesc): Promise<DTaskNode|null>{
         // console.log("总节点数:", this.nodes)
-        let pickedCount = Number.MAX_SAFE_INTEGER;
+        //let pickedCount = Number.MAX_SAFE_INTEGER;
         let picked = [] as DTaskNode[];
 
         let onlineNum:number = 0;
@@ -94,46 +97,44 @@ export class DTaskManager {
             if (!node.online) {
                 continue;
             }
-            if (!node.refreshAt || node.refreshAt + 60 * 1000 < new Date().valueOf()) {
-                node.online = false;
-                logger.info(`节点:${node.id}可能已经掉线`)
-                continue;
-            }
             onlineNum++;
             if (node.concurrency != 0 && node.current_task_count >= node.concurrency) {
                 continue;
             }
             let count = desc.getCurrentCountForIp(node.ip);
-            if (count < pickedCount) {
-                pickedCount = count;
-                picked = [node];
-            } else if (count == pickedCount) {
-                picked.push(node);
-            }
+            if(count >= desc.concurrency)
+                continue;
+            picked.push(node);
         }
-
-        if (pickedCount >= desc.concurrency) {
-            pickedCount = Infinity;
-            picked = [];
-        }
-        logger.info(`Nodes: online(${onlineNum}), idle(${picked.length}@${pickedCount})`);
+        // if (pickedCount >= desc.concurrency) {
+        //     pickedCount = Infinity;
+        //     picked = [];
+        // }
+        logger.info(`Nodes: online(${onlineNum}), idle(${picked.length}@${picked.length})`);
         if(picked.length == 0) {
             logger.info('Node task status:')
             for(let [_, _node] of this.nodes) {
                 logger.info('节点：', _node.ip, _node.current_task_count);
             }
             logger.info('IP task status:');
-            for(let [ip, count] of desc.countMap){
-                logger.info('IP：', ip, count);
-            }
-            for(let [ip, val] of desc.bannedMap) {
-                logger.info("BannedIp:", ip, val);
+            for(let [ip, stat] of desc.statMap){
+                logger.info('IP：', ip, stat.running, stat.lastRun, stat.banUntil);
             }
             return null;
         }
 
-        let rand = Math.floor(Math.random() * picked.length);
-        return picked[rand];
+        picked.sort((a, b)=>{
+            let sa = desc.getIpStat(a.ip);
+            let sb = desc.getIpStat(b.ip);
+            let diff = sa.lastRun - sb.lastRun;
+            if(diff != 0)
+                return diff;
+            return sa.running - sb.running;
+        });
+        return picked[0] || null;
+
+        // let rand = Math.floor(Math.random() * picked.length);
+        // return picked[rand];
     }
 }
 
