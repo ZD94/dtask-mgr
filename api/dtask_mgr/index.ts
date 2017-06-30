@@ -60,10 +60,11 @@ export class DTaskManager {
 
     async runTask(params: {name: string, input: any}): Promise<any>{
         let desc = this.tasks.get(params.name);
-        logger.info(`Task: ${params.name}(${desc?JSON.stringify(desc.params):'null'})`);
-        logger.info("Task input:", JSON.stringify(params.input));
         const RETRY_COUNT = 2;
         for(let retry=0; retry<=RETRY_COUNT; retry++){
+            let prefix = retry > 0 ? 'Retry ': '';
+            logger.info(`${prefix}Task: ${params.name}(${desc?JSON.stringify(desc.params):'null'})`);
+            logger.info("Task input:", JSON.stringify(params.input));
             let ret;
             try {
                 if(!desc){
@@ -110,7 +111,7 @@ export class DTaskManager {
         //     pickedCount = Infinity;
         //     picked = [];
         // }
-        logger.info(`Nodes: online(${onlineNum}), idle(${picked.length}@${picked.length})`);
+        logger.info(`Nodes: online(${onlineNum}), idle(${picked.length})`);
         if(picked.length == 0) {
             logger.info('Node task status:')
             for(let [_, _node] of this.nodes) {
@@ -132,7 +133,8 @@ export class DTaskManager {
             return sa.running - sb.running;
         });
         let chooseNode = picked[0];
-        logger.info(`Choose Node ${chooseNode.id}`)
+        let stat = desc.getIpStat(chooseNode.ip);
+        logger.info(`Choose Node ${chooseNode.id}, ${chooseNode.current_task_count} ${stat.running} ${Date.now() - stat.lastRun}`)
         return chooseNode || null;
 
         // let rand = Math.floor(Math.random() * picked.length);
