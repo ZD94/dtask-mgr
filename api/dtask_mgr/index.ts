@@ -131,7 +131,7 @@ export class DTaskManager {
                 return diff;
             return sa.running - sb.running;
         });
-        let chooseNode = picked[picked.length-1];
+        let chooseNode = picked[0];
         logger.info(`Choose Node ${chooseNode.id}`)
         return chooseNode || null;
 
