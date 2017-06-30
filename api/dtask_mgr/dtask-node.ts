@@ -46,6 +46,7 @@ export class DTaskNode{
         try {
             let ret = await task.run(this, obj);
             return ret;
+
         } finally {
             this.current_task_count--;
         }

@@ -65,6 +65,12 @@
       "concurrency": 1,
       "prog": "docker.l.jingli365.com/dtasks-skyscanner-flight-abroad",
       "version": "master"
+    },
+    "jingzhong-flight": {
+      "type": "docker",
+      "concurrency": 10,
+      "prog": "docker.l.jingli365.com/dtask-jingzhong-flight",
+      "version": "master"
     }
   }
 }
