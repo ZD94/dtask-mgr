@@ -131,7 +131,9 @@ export class DTaskManager {
                 return diff;
             return sa.running - sb.running;
         });
-        return picked[0] || null;
+        let chooseNode = picked[0];
+        logger.info(`Choose Node ${chooseNode.id}`)
+        return chooseNode || null;
 
         // let rand = Math.floor(Math.random() * picked.length);
         // return picked[rand];
