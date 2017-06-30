@@ -69,7 +69,7 @@
     "jingzhong-flight": {
       "type": "docker",
       "concurrency": 10,
-      "prog": "docker.l.jingli365.com/dtask-jingzhong-flight",
+      "prog": "docker.l.jingli365.com/dtasks-jingzhong-flight",
       "version": "master"
     }
   }
