@@ -75,7 +75,7 @@ export class DTaskManager {
             logger.info(`${prefix}Task: ${params.name}(${desc?JSON.stringify(desc.params):'null'})`);
             logger.info("Task input:", JSON.stringify(params.input));
             let ret;
-            let logId = 0;
+            // let logId = 0;
             try {
                 if(!desc){
                     throw new Error('Task is not defined: '+params.name);
