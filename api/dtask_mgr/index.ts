@@ -81,40 +81,40 @@ export class DTaskManager {
                     throw new Error('Task is not defined: '+params.name);
                 }
                 let node = await this.pickNode(desc);
-                try {
-                    logId = await taskRecord.beginTask({
-                        task_name: params.name,
-                        task_desc: desc,
-                        task_id: '', 
-                        node: node ? node.id : '',
-                        params: params.input,
-                        ip: node ? node.ip : ''
-                    });
-                } catch (err) { 
-                    logger.error(`taskrecord call beginTask error:`, err);
-                }
+                // try {
+                //     logId = await taskRecord.beginTask({
+                //         task_name: params.name,
+                //         task_desc: desc,
+                //         task_id: '', 
+                //         node: node ? node.id : '',
+                //         params: params.input,
+                //         ip: node ? node.ip : ''
+                //     });
+                // } catch (err) { 
+                //     logger.error(`taskrecord call beginTask error:`, err);
+                // }
 
                 if(!node){
                     throw new Error('No available node for task: '+params.name);
                 }
                 ret = await node.runTask(desc, params.input);
-                try {
-                    await taskRecord.finishTask({
-                        id: logId,
-                        status: 1,
-                        result: ret,
-                    })
-                } catch (err) { 
-                    logger.error(`taskrecord call finishTask error:`, err);
-                }
+                // try {
+                //     await taskRecord.finishTask({
+                //         id: logId,
+                //         status: 1,
+                //         result: ret,
+                //     })
+                // } catch (err) { 
+                //     logger.error(`taskrecord call finishTask error:`, err);
+                // }
                 
                 return ret;
             } catch (e) {
-                await taskRecord.finishTask({
-                    id: logId,
-                    status: -1,
-                    result: e.stack,
-                });
+                // await taskRecord.finishTask({
+                //     id: logId,
+                //     status: -1,
+                //     result: e.stack,
+                // });
                 logger.error('Task exception:', e.stack ? e.stack : e);
                 if(e.code != 403 || retry == RETRY_COUNT)
                     throw e;
