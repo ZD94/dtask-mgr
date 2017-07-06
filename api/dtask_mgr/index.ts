@@ -5,7 +5,7 @@ import { DTaskDesc, TaskParams } from './dtask-desc';
 import Logger from "@jingli/logger";
 var logger = new Logger("dtask-mgr");
 let config = require('@jingli/config');
-import taskRecord from './task-record';
+// import taskRecord from './task-record';
 
 export interface registerNodeParam{
     id: string;
