@@ -10,6 +10,9 @@ import Logger from '@jingli/logger';
 Logger.init(config.logger);
 let logger = new Logger('dtask');
 
+import database = require("@jingli/database");
+database.init(config.postgres.url);
+
 import * as zone from '@jingli/zone-setup';
 
 import * as forever from 'forever-monitor';

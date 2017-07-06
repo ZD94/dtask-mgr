@@ -5,6 +5,7 @@ import { DTaskDesc, TaskParams } from './dtask-desc';
 import Logger from "@jingli/logger";
 var logger = new Logger("dtask-mgr");
 let config = require('@jingli/config');
+import taskRecord from './task-record';
 
 export interface registerNodeParam{
     id: string;
@@ -74,17 +75,46 @@ export class DTaskManager {
             logger.info(`${prefix}Task: ${params.name}(${desc?JSON.stringify(desc.params):'null'})`);
             logger.info("Task input:", JSON.stringify(params.input));
             let ret;
+            let logId = 0;
             try {
                 if(!desc){
                     throw new Error('Task is not defined: '+params.name);
                 }
                 let node = await this.pickNode(desc);
+                try {
+                    logId = await taskRecord.beginTask({
+                        task_name: params.name,
+                        task_desc: desc,
+                        task_id: '', 
+                        node: node ? node.id : '',
+                        params: params.input,
+                        ip: node ? node.ip : ''
+                    });
+                } catch (err) { 
+                    logger.error(`taskrecord call beginTask error:`, err);
+                }
+
                 if(!node){
                     throw new Error('No available node for task: '+params.name);
                 }
                 ret = await node.runTask(desc, params.input);
+                try {
+                    await taskRecord.finishTask({
+                        id: logId,
+                        status: 1,
+                        result: ret,
+                    })
+                } catch (err) { 
+                    logger.error(`taskrecord call finishTask error:`, err);
+                }
+                
                 return ret;
             } catch (e) {
+                await taskRecord.finishTask({
+                    id: logId,
+                    status: -1,
+                    result: e.stack,
+                });
                 logger.error('Task exception:', e.stack ? e.stack : e);
                 if(e.code != 403 || retry == RETRY_COUNT)
                     throw e;
