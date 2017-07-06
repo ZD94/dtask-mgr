@@ -71,6 +71,12 @@
       "concurrency": 10,
       "prog": "docker.l.jingli365.com/dtasks-jingzhong-flight",
       "version": "master"
+    },
+    "phantom-ctrip-flight": {
+      "type": "docker",
+      "concurrency": 5,
+      "prog": "docker.l.jingli365.com/dtasks-phantom-ctrip-flight",
+      "version": "master"
     }
   }
 }
