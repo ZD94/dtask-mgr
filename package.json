@@ -8,7 +8,7 @@
   },
   "main": "server.js",
   "scripts": {
-    "dist": "tsc && mkdir -p dist/config && cp package.json dist/ && cp config/config.json dist/config/",
+    "dist": "tsc && mkdir -p dist/config && cp package.json dist/ && cp config/config.json dist/config/ && cp -R api/dtask_mgr/sql dist/api/dtask_mgr/sql",
     "clean": "rm -rf dist; rm -rf tmp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
