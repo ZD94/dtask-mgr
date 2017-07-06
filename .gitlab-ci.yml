@@ -56,7 +56,7 @@ deploy:master:
     name: dev
     url: https://l.jingli365.com
   variables:
-    JL_APP_POSTGRES: postgres://test:$PG_PASS_TEST@dockerhost:15432/${CI_PROJECT_NAMESPACE}_${CI_PROJECT_NAME}_${CI_COMMIT_REF_SLUG}
+    JL_APP_POSTGRES: postgres://times:$PG_PASS_TEST@dockerhost:15432/svr_dtask_mgr_master
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
