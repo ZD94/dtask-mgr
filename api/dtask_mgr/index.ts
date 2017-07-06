@@ -23,6 +23,14 @@ export class DTaskManager {
     private nodes = new Map<string, DTaskNode>();
     private tasks = new Map<string, DTaskDesc>();
 
+    getNodes() { 
+        return this.nodes;
+    }    
+
+    getTasks() { 
+        return this.tasks;
+    }
+    
     registerNode(params: registerNodeParam){
         let node_ = this.nodes.get(params.id);
         if (!node_){

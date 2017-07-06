@@ -21,6 +21,9 @@ process.on('unhandledRejection', (reason: any, p: PromiseLike<any>) => {
     logger.error(reason);
 });
 
+import http = require("http");
+import app from './app';
+
 if (process.argv[2] == '-d') {
     let child = new (forever.Monitor)(process.argv[1], { args: process.argv.slice(3), });
     child.on('start', function() {
@@ -33,13 +36,17 @@ if (process.argv[2] == '-d') {
 } else {
     setInterval(() => {
         logger.log('MemoryUsage:', JSON.stringify(process.memoryUsage()));
-    }, 5* 60 * 1000)
+    }, 5 * 60 * 1000)
 
     zone.forkStackTrace()
         .run(async function(){
             await API.initSql(path.join(__dirname, 'api'), config.api);
             await API.init(path.join(__dirname, 'api'), config.api);
             await API.startServices(config.listen);
+            await API.initHttpApp(app);
+            const webServer = http.createServer(app);
+            webServer.listen(config.mgrport);
+            logger.info(`mgr web start on ${config.mgport}..`)
             logger.info('API initialized.');
         });
 }

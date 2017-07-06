@@ -2,7 +2,7 @@
   "appName": "${JL_APP_NAME}",
   "rootDir": "${JL_APP_DATA_DIR}",
   "listen": "4000",
-
+  "mgrport": "5000",
   "workdir": "${{rootDir}}/tmp/workdir",
 
   "postgres":{
