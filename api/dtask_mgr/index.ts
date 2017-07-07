@@ -24,14 +24,27 @@ export class DTaskManager {
     private nodes = new Map<string, DTaskNode>();
     private tasks = new Map<string, DTaskDesc>();
 
-    getNodes() { 
+    getNodes() {
         return this.nodes;
-    }    
+    }
 
-    getTasks() { 
+    getTasks() {
         return this.tasks;
     }
-    
+    stat(): string{
+        let ret = [] as string[];
+        ret.push('DTaskMgr status:')
+        ret.push('Tasks status:')
+        for (let [_, desc] of this.tasks) {
+            ret.push(desc.stat());
+        }
+        ret.push('Nodes status:')
+        for (let [_, node] of this.nodes) {
+            ret.push(node.stat());
+        }
+        return ret.join('\n');
+    }
+
     registerNode(params: registerNodeParam){
         let node_ = this.nodes.get(params.id);
         if (!node_){
@@ -71,8 +84,8 @@ export class DTaskManager {
         let desc = this.tasks.get(params.name);
         const RETRY_COUNT = 2;
         for(let retry=0; retry<=RETRY_COUNT; retry++){
-            let prefix = retry > 0 ? 'Retry ': '';
-            logger.info(`${prefix}Task: ${params.name}(${desc?JSON.stringify(desc.params):'null'})`);
+            let prefix = retry > 0 ? 'Retry': 'Run';
+            logger.info(`${prefix} Task: ${params.name}(${desc?JSON.stringify(desc.params):'null'})`);
             logger.info("Task input:", JSON.stringify(params.input));
             let ret;
             // let logId = 0;
@@ -85,12 +98,12 @@ export class DTaskManager {
                 //     logId = await taskRecord.beginTask({
                 //         task_name: params.name,
                 //         task_desc: desc,
-                //         task_id: '', 
+                //         task_id: '',
                 //         node: node ? node.id : '',
                 //         params: params.input,
                 //         ip: node ? node.ip : ''
                 //     });
-                // } catch (err) { 
+                // } catch (err) {
                 //     logger.error(`taskrecord call beginTask error:`, err);
                 // }
 
@@ -104,10 +117,10 @@ export class DTaskManager {
                 //         status: 1,
                 //         result: ret,
                 //     })
-                // } catch (err) { 
+                // } catch (err) {
                 //     logger.error(`taskrecord call finishTask error:`, err);
                 // }
-                
+
                 return ret;
             } catch (e) {
                 // await taskRecord.finishTask({

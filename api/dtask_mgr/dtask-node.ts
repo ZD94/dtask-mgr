@@ -1,4 +1,5 @@
 
+import moment = require('moment');
 import { DTaskDesc, RunTaskParams } from './dtask-desc';
 
 import Logger from "@jingli/logger";
@@ -50,5 +51,10 @@ export class DTaskNode{
         } finally {
             this.current_task_count--;
         }
+    }
+
+    stat(): string {
+        let refreshAt = moment(this.refreshAt).format('YYYY/MM/DD HH:mm:ss');
+        return `Node ${this.id} ${this.online ? 'online' : 'offline'}@${refreshAt}, IP(${this.ip}: ${this.current_task_count}`;
     }
 }
