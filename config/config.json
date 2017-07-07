@@ -22,61 +22,61 @@
       "type": "docker",
       "concurrency": 1,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-flight-abroad",
-      "version": "73a5e66b3ccb"
+      "version": "master"
     },
     "ctrip-flight-domestic": {
       "type": "docker",
       "concurrency": 1,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-flight-domestic",
-      "version": "0be4adc6d273"
+      "version": "master"
     },
     "ctrip-hotel-abroad": {
       "type": "docker",
       "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-hotel-abroad",
-      "version": "ef889d930e96"
+      "version": "master"
     },
     "ctrip-hotel-domestic": {
       "type": "docker",
       "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-hotel-domestic",
-      "version": "13a25bb692c0"
+      "version": "master"
     },
     "ctrip-train-eurorail": {
       "type": "docker",
       "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-train-eurorail",
-      "version": "bb3f49e21640"
+      "version": "master"
     },
     "ctrip-train-domestic": {
       "type": "docker",
       "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-train-domestic",
-      "version": "8f44b3e74f68"
+      "version": "master"
     },
     "qunar-train-domestic": {
       "type": "docker",
       "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-qunar-train-domestic",
-      "version": "bc35d76c8c63"
+      "version": "master"
     },
     "skyscanner-flight": {
       "type": "docker",
       "concurrency": 1,
       "prog": "docker.l.jingli365.com/dtasks-skyscanner-flight-abroad",
-      "version": "170d8766e62a"
+      "version": "master"
     },
     "jingzhong-flight": {
       "type": "docker",
       "concurrency": 10,
       "prog": "docker.l.jingli365.com/dtasks-jingzhong-flight",
-      "version": "79f376f74179"
+      "version": "master"
     },
     "phantom-ctrip-flight": {
       "type": "docker",
       "concurrency": 5,
       "prog": "docker.l.jingli365.com/dtasks-phantom-ctrip-flight",
-      "version": "a45163e2f328"
+      "version": "master"
     }
   }
 }
