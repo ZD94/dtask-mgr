@@ -209,3 +209,8 @@ for (let name in config.tasks) {
         }
     });
 }
+
+setInterval(() => {
+    logger.log('MemoryUsage:', JSON.stringify(process.memoryUsage()));
+    logger.log(mgr.stat());
+}, 5 * 60 * 1000);
