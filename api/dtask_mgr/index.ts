@@ -31,7 +31,7 @@ export class DTaskManager {
     getTasks() {
         return this.tasks;
     }
-    stat(): string{
+    async stat(): Promise<string>{
         let ret = [] as string[];
         ret.push('DTaskMgr status:')
         ret.push('Tasks status:')
@@ -210,7 +210,11 @@ for (let name in config.tasks) {
     });
 }
 
-setInterval(() => {
-    logger.log('MemoryUsage:', JSON.stringify(process.memoryUsage()));
-    logger.log(mgr.stat());
+setInterval(async () => {
+    try { 
+        logger.log('MemoryUsage:', JSON.stringify(process.memoryUsage()));
+        logger.log(await mgr.stat());
+    } catch (err) {
+        logger.error(err.stack ? err.stack : err);
+    }
 }, 5 * 60 * 1000);
