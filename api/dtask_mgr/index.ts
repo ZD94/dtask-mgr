@@ -36,11 +36,11 @@ export class DTaskManager {
         ret.push('DTaskMgr status:')
         ret.push('Tasks status:')
         for (let [_, desc] of this.tasks) {
-            ret.push(desc.stat());
+            ret.push(await desc.stat());
         }
         ret.push('Nodes status:')
         for (let [_, node] of this.nodes) {
-            ret.push(node.stat());
+            ret.push(await node.stat());
         }
         return ret.join('\n');
     }
