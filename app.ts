@@ -13,14 +13,10 @@ app.use(function (req: any, res: any, next: Function) {
 
 app.get('/nodes', async (req: any, res: any, next: any) => {
     try {
-        let nodeMap = await mgr.getNodes();
-        let result = {}
-        for (let [key, value] of nodeMap) { 
-            result[key] = value;
-        }
-        res.json(result);
+        let stat = await mgr.stat();
+        res.send(stat);
     } catch (err) { 
-        return next(err);
+        next(err);
     }
 });
 export { app };
