@@ -1,5 +1,6 @@
 
 import moment = require('moment');
+import * as net from 'net';
 import { DTaskDesc, RunTaskParams } from './dtask-desc';
 
 import Logger from "@jingli/logger";
@@ -20,6 +21,7 @@ export class DTaskNode{
     current_task_count = 0;
     handle: INodeHandle|null;
     online: boolean;
+    sock: net.Socket;
     refreshAt?: number;
 
     constructor(public id: string, options: {ip: string, concurrency?: number}){
@@ -29,17 +31,20 @@ export class DTaskNode{
         this.online = false;
     }
 
-    onconnected(handle: INodeHandle) {
+    onconnected(handle: INodeHandle, sock: net.Socket) {
         logger.info(`Node[${this.id}] connected, ip:`, this.ip);
+        this.sock = sock;
         this.handle = handle;
         this.online = true;
         this.refreshAt = Date.now();
     }
 
-    ondisconnected(){
+    ondisconnected(sock: net.Socket) {
         logger.warn(`Node[${this.id}] disconnected, ip:`, this.ip);
-        this.online = false;
-        this.handle = null;
+        if (this.sock === sock) {
+            this.online = false;
+            this.handle = null;
+        }
     }
 
     async runTask(task: DTaskDesc, obj: any): Promise<any>{

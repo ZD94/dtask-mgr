@@ -54,13 +54,13 @@ export class DTaskManager {
             });
             this.nodes.set(node_.id, node_);
         }
+        let sock = <net.Socket>Zone.current.get('stream');
         const node = node_;
         node.ip = params.ip;
         node.concurrency = params.concurrency;
-        node.onconnected(params.handle);
-        let sock = <net.Socket>Zone.current.get('stream');
+        node.onconnected(params.handle, sock);
         sock.on('close', () => {
-            node.ondisconnected();
+            node.ondisconnected(sock);
         });
     }
 
