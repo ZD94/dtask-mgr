@@ -78,6 +78,7 @@ export class DTaskManager {
         if (!node)
             return;
         node.refreshAt = params.refreshAt;
+        return 'ok';
     }
 
     async runTask(params: {name: string, input: any}): Promise<any>{
