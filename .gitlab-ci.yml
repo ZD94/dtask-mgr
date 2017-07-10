@@ -69,6 +69,7 @@ deploy:release:
   stage: deploy
   only:
     - /^release$/
+  when: manual
   environment:
     name: release
     url: https://j.jingli365.com
