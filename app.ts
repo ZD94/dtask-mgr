@@ -14,7 +14,7 @@ app.use(function (req: any, res: any, next: Function) {
 app.get('/nodes', async (req: any, res: any, next: any) => {
     try {
         let stat = await mgr.stat();
-        res.send(stat);
+        res.send(`<pre>${stat}</pre>`);
     } catch (err) { 
         next(err);
     }
