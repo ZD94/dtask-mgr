@@ -15,7 +15,16 @@
   },
   "logger": {
     "path": "${{rootDir}}/log",
-    "prefix": "${{appName}}_"
+    "prefix": "${{appName}}_",
+    "httptype": "short",
+    "mods": {
+      "output": { "prefix": "${{appName}}_output_", "console": false },
+      "http": {
+        "mods": {
+          "access": { "console": false }
+        }
+      }
+    }
   },
   "tasks": {
     "ctrip-flight-abroad": {

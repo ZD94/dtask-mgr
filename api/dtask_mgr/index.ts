@@ -4,6 +4,7 @@ import { DTaskNode, INodeHandle } from './dtask-node';
 import { DTaskDesc, TaskParams } from './dtask-desc';
 import Logger from "@jingli/logger";
 var logger = new Logger("dtask-mgr");
+var outputLogger = new Logger("output");
 let config = require('@jingli/config');
 // import taskRecord from './task-record';
 
@@ -134,7 +135,8 @@ export class DTaskManager {
                     throw e;
             } finally {
                 if (ret) {
-                    logger.info('Task output:', JSON.stringify(ret, null, '  '));
+                    // logger.info('Task output:', JSON.stringify(ret, null, '  '));
+                    outputLogger.info('Task output:', JSON.stringify(ret, null, '  '));
                 }
             }
         }
