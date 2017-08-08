@@ -15,68 +15,77 @@
   },
   "logger": {
     "path": "${{rootDir}}/log",
-    "prefix": "${{appName}}_"
+    "prefix": "${{appName}}_",
+    "httptype": "short",
+    "mods": {
+      "output": { "prefix": "${{appName}}_output_", "console": false },
+      "http": {
+        "mods": {
+          "access": { "console": false }
+        }
+      }
+    }
   },
   "tasks": {
     "ctrip-flight-abroad": {
       "type": "docker",
       "concurrency": 1,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-flight-abroad",
-      "version": "master"
+      "version": "${JL_APP_BRANCH}"
     },
     "ctrip-flight-domestic": {
       "type": "docker",
       "concurrency": 1,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-flight-domestic",
-      "version": "master"
+      "version": "${JL_APP_BRANCH}"
     },
     "ctrip-hotel-abroad": {
       "type": "docker",
       "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-hotel-abroad",
-      "version": "master"
+      "version": "${JL_APP_BRANCH}"
     },
     "ctrip-hotel-domestic": {
       "type": "docker",
       "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-hotel-domestic",
-      "version": "master"
+      "version": "${JL_APP_BRANCH}"
     },
     "ctrip-train-eurorail": {
       "type": "docker",
       "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-train-eurorail",
-      "version": "master"
+      "version": "${JL_APP_BRANCH}"
     },
     "ctrip-train-domestic": {
       "type": "docker",
       "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-ctrip-train-domestic",
-      "version": "master"
+      "version": "${JL_APP_BRANCH}"
     },
     "qunar-train-domestic": {
       "type": "docker",
       "concurrency": 3,
       "prog": "docker.l.jingli365.com/dtasks-qunar-train-domestic",
-      "version": "master"
+      "version": "${JL_APP_BRANCH}"
     },
     "skyscanner-flight": {
       "type": "docker",
       "concurrency": 1,
       "prog": "docker.l.jingli365.com/dtasks-skyscanner-flight-abroad",
-      "version": "master"
+      "version": "${JL_APP_BRANCH}"
     },
     "jingzhong-flight": {
       "type": "docker",
       "concurrency": 10,
       "prog": "docker.l.jingli365.com/dtasks-jingzhong-flight",
-      "version": "master"
+      "version": "${JL_APP_BRANCH}"
     },
     "phantom-ctrip-flight": {
       "type": "docker",
       "concurrency": 5,
       "prog": "docker.l.jingli365.com/dtasks-phantom-ctrip-flight",
-      "version": "master"
+      "version": "${JL_APP_BRANCH}"
     }
   }
 }

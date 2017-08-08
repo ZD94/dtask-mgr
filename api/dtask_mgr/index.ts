@@ -4,6 +4,7 @@ import { DTaskNode, INodeHandle } from './dtask-node';
 import { DTaskDesc, TaskParams } from './dtask-desc';
 import Logger from "@jingli/logger";
 var logger = new Logger("dtask-mgr");
+var outputLogger = new Logger("output");
 let config = require('@jingli/config');
 // import taskRecord from './task-record';
 
@@ -54,13 +55,13 @@ export class DTaskManager {
             });
             this.nodes.set(node_.id, node_);
         }
+        let sock = <net.Socket>Zone.current.get('stream');
         const node = node_;
         node.ip = params.ip;
         node.concurrency = params.concurrency;
-        node.onconnected(params.handle);
-        let sock = <net.Socket>Zone.current.get('stream');
+        node.onconnected(params.handle, sock);
         sock.on('close', () => {
-            node.ondisconnected();
+            node.ondisconnected(sock);
         });
     }
 
@@ -78,6 +79,7 @@ export class DTaskManager {
         if (!node)
             return;
         node.refreshAt = params.refreshAt;
+        return 'ok';
     }
 
     async runTask(params: {name: string, input: any}): Promise<any>{
@@ -133,7 +135,8 @@ export class DTaskManager {
                     throw e;
             } finally {
                 if (ret) {
-                    logger.info('Task output:', JSON.stringify(ret, null, '  '));
+                    // logger.info('Task output:', JSON.stringify(ret, null, '  '));
+                    outputLogger.info('Task output:', JSON.stringify(ret, null, '  '));
                 }
             }
         }
