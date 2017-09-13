@@ -86,6 +86,12 @@
       "concurrency": 5,
       "prog": "docker.l.jingli365.com/dtasks-phantom-ctrip-flight",
       "version": "${JL_APP_BRANCH}"
+    },
+    "kiwi-flight": {
+      "type": "docker",
+      "concurrency": 10,
+      "prog": "docker.l.jingli365.com/dtasks-kiwi-flight",
+      "version": "${JL_APP_BRANCH}"
     }
   }
 }
