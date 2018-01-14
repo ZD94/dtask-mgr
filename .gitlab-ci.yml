@@ -1,5 +1,5 @@
 variables:
-  DOCKER_REG: docker.l.jingli365.com
+  DOCKER_REG: dk.l.jingli365.com
   DOCKER_NAME: $CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME
   DOCKER_CI_NAME: $DOCKER_REG/$CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME:$CI_COMMIT_SHA
   DOCKER_BRANCH_NAME: $DOCKER_REG/$CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG
@@ -23,7 +23,7 @@ build:dist:
   stage: build
   only:
     - branches
-  image: $DOCKER_REG/jl-build:v2
+  image: $DOCKER_REG/jl-build:v3
   tags:
     - serial
   cache:
@@ -33,8 +33,7 @@ build:dist:
   script:
     - mkdir -p $NPM_CACHE_DIR/`npmhash`/node_modules && ln -s $NPM_CACHE_DIR/`npmhash`/node_modules .
     - echo `npmhash`
-    - git submodule update --init --checkout
-    - npm --registry https://npm.l.jingli365.com install
+    - npm install
     - npm run dist
 
 build:image:
@@ -45,7 +44,7 @@ build:image:
       - dist/
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
-    - docker build -t $DOCKER_CI_NAME .
+    - docker build -t $DOCKER_CI_NAME . --build-arg NPM_TOKEN=$NPM_TOKEN
     - docker push $DOCKER_CI_NAME
 
 deploy:master:

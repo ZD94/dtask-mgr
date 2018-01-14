@@ -4,8 +4,7 @@
   "listen": "4000",
   "mgrport": "5000",
   "workdir": "${{rootDir}}/tmp/workdir",
-
-  "postgres":{
+  "postgres": {
     "url": "${JL_APP_POSTGRES}",
     "debug": true
   },
@@ -18,10 +17,15 @@
     "prefix": "${{appName}}_",
     "httptype": "short",
     "mods": {
-      "output": { "prefix": "${{appName}}_output_", "console": false },
+      "output": {
+        "prefix": "${{appName}}_output_",
+        "console": false
+      },
       "http": {
         "mods": {
-          "access": { "console": false }
+          "access": {
+            "console": false
+          }
         }
       }
     }
@@ -30,67 +34,67 @@
     "ctrip-flight-abroad": {
       "type": "docker",
       "concurrency": 1,
-      "prog": "docker.l.jingli365.com/dtasks-ctrip-flight-abroad",
+      "prog": "dk.jingli365.com/dtasks-ctrip-flight-abroad",
       "version": "${JL_APP_BRANCH}"
     },
     "ctrip-flight-domestic": {
       "type": "docker",
       "concurrency": 1,
-      "prog": "docker.l.jingli365.com/dtasks-ctrip-flight-domestic",
+      "prog": "dk.jingli365.com/dtasks-ctrip-flight-domestic",
       "version": "${JL_APP_BRANCH}"
     },
     "ctrip-hotel-abroad": {
       "type": "docker",
       "concurrency": 3,
-      "prog": "docker.l.jingli365.com/dtasks-ctrip-hotel-abroad",
+      "prog": "dk.jingli365.com/dtasks-ctrip-hotel-abroad",
       "version": "${JL_APP_BRANCH}"
     },
     "ctrip-hotel-domestic": {
       "type": "docker",
       "concurrency": 3,
-      "prog": "docker.l.jingli365.com/dtasks-ctrip-hotel-domestic",
+      "prog": "dk.jingli365.com/dtasks-ctrip-hotel-domestic",
       "version": "${JL_APP_BRANCH}"
     },
     "ctrip-train-eurorail": {
       "type": "docker",
       "concurrency": 3,
-      "prog": "docker.l.jingli365.com/dtasks-ctrip-train-eurorail",
+      "prog": "dk.jingli365.com/dtasks-ctrip-train-eurorail",
       "version": "${JL_APP_BRANCH}"
     },
     "ctrip-train-domestic": {
       "type": "docker",
       "concurrency": 3,
-      "prog": "docker.l.jingli365.com/dtasks-ctrip-train-domestic",
+      "prog": "dk.jingli365.com/dtasks-ctrip-train-domestic",
       "version": "${JL_APP_BRANCH}"
     },
     "qunar-train-domestic": {
       "type": "docker",
       "concurrency": 3,
-      "prog": "docker.l.jingli365.com/dtasks-qunar-train-domestic",
+      "prog": "dk.jingli365.com/dtasks-qunar-train-domestic",
       "version": "${JL_APP_BRANCH}"
     },
     "skyscanner-flight": {
       "type": "docker",
       "concurrency": 1,
-      "prog": "docker.l.jingli365.com/dtasks-skyscanner-flight-abroad",
+      "prog": "dk.jingli365.com/dtasks-skyscanner-flight-abroad",
       "version": "${JL_APP_BRANCH}"
     },
     "jingzhong-flight": {
       "type": "docker",
       "concurrency": 10,
-      "prog": "docker.l.jingli365.com/dtasks-jingzhong-flight",
+      "prog": "dk.jingli365.com/dtasks-jingzhong-flight",
       "version": "${JL_APP_BRANCH}"
     },
     "phantom-ctrip-flight": {
       "type": "docker",
       "concurrency": 5,
-      "prog": "docker.l.jingli365.com/dtasks-phantom-ctrip-flight",
+      "prog": "dk.jingli365.com/dtasks-phantom-ctrip-flight",
       "version": "${JL_APP_BRANCH}"
     },
     "kiwi-flight": {
       "type": "docker",
       "concurrency": 10,
-      "prog": "docker.l.jingli365.com/dtasks-kiwi-flight",
+      "prog": "dk.jingli365.com/dtasks-kiwi-flight",
       "version": "${JL_APP_BRANCH}"
     }
   }
