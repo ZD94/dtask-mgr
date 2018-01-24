@@ -15,7 +15,7 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
-    "@jingli/config": "^1.0.6",
+    "@jingli/config": "1.0.6",
     "@jingli/database": "^1.0.1",
     "@jingli/dnode-api": "^1.1.6",
     "@jingli/language": "^1.0.0",
