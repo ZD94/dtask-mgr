@@ -15,9 +15,19 @@ app.get('/nodes', async (req: any, res: any, next: any) => {
     try {
         let stat = await mgr.stat();
         res.send(`<pre>${stat}</pre>`);
-    } catch (err) { 
+    } catch (err) {
         next(err);
     }
 });
+
+app.get('/freeNodes', async (req: any, res: any, next: any) => {
+    try {
+        let stat = await mgr.statNumber();
+        res.json(stat);
+    } catch (err) {
+        next(err);
+    }
+});
+
 export { app };
 export default app;

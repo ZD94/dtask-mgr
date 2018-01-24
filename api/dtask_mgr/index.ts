@@ -8,13 +8,13 @@ var outputLogger = new Logger("output");
 let config = require('@jingli/config');
 // import taskRecord from './task-record';
 
-export interface registerNodeParam{
+export interface registerNodeParam {
     id: string;
     ip: string;
     concurrency: number;
     handle: INodeHandle;
 }
-export interface registerTaskParam{
+export interface registerTaskParam {
     name: string;
     concurrency: number;
     type: string;
@@ -32,7 +32,7 @@ export class DTaskManager {
     getTasks() {
         return this.tasks;
     }
-    async stat(): Promise<string>{
+    async stat(): Promise<string> {
         let ret = [] as string[];
         ret.push('DTaskMgr status:')
         ret.push('Tasks status:')
@@ -46,9 +46,22 @@ export class DTaskManager {
         return ret.join('\n');
     }
 
-    registerNode(params: registerNodeParam){
+    async statNumber(): Promise<any> {
+        let freeNodes = 0;
+        for (let [_, node] of this.nodes) {
+            if (node.current_task_count == 0) {
+                freeNodes++
+            }
+        }
+        return {
+            nodes: this.nodes.size,
+            freeNodes
+        }
+    }
+
+    registerNode(params: registerNodeParam) {
         let node_ = this.nodes.get(params.id);
-        if (!node_){
+        if (!node_) {
             node_ = new DTaskNode(params.id, {
                 ip: params.ip,
                 concurrency: params.concurrency,
@@ -65,8 +78,8 @@ export class DTaskManager {
         });
     }
 
-    registerTask(params: registerTaskParam){
-        if(this.tasks.has(params.name)) {
+    registerTask(params: registerTaskParam) {
+        if (this.tasks.has(params.name)) {
             throw new Error('Task name duplication');
         }
         let desc = new DTaskDesc(params.name, params.type, params.options, params.concurrency);
@@ -74,7 +87,7 @@ export class DTaskManager {
     }
 
     //刷新注册的node
-    refreshNode(params: {id: string, refreshAt: number}) {
+    refreshNode(params: { id: string, refreshAt: number }) {
         let node = this.nodes.get(params.id);
         if (!node)
             return;
@@ -82,18 +95,18 @@ export class DTaskManager {
         return 'ok';
     }
 
-    async runTask(params: {name: string, input: any}): Promise<any>{
+    async runTask(params: { name: string, input: any }): Promise<any> {
         let desc = this.tasks.get(params.name);
         const RETRY_COUNT = 2;
-        for(let retry=0; retry<=RETRY_COUNT; retry++){
-            let prefix = retry > 0 ? 'Retry': 'Run';
-            logger.info(`${prefix} Task: ${params.name}(${desc?JSON.stringify(desc.params):'null'})`);
+        for (let retry = 0; retry <= RETRY_COUNT; retry++) {
+            let prefix = retry > 0 ? 'Retry' : 'Run';
+            logger.info(`${prefix} Task: ${params.name}(${desc ? JSON.stringify(desc.params) : 'null'})`);
             logger.info("Task input:", JSON.stringify(params.input));
             let ret;
             // let logId = 0;
             try {
-                if(!desc){
-                    throw new Error('Task is not defined: '+params.name);
+                if (!desc) {
+                    throw new Error('Task is not defined: ' + params.name);
                 }
                 let node = await this.pickNode(desc);
                 // try {
@@ -109,8 +122,8 @@ export class DTaskManager {
                 //     logger.error(`taskrecord call beginTask error:`, err);
                 // }
 
-                if(!node){
-                    throw new Error('No available node for task: '+params.name);
+                if (!node) {
+                    throw new Error('No available node for task: ' + params.name);
                 }
                 ret = await node.runTask(desc, params.input);
                 // try {
@@ -131,7 +144,7 @@ export class DTaskManager {
                 //     result: e.stack,
                 // });
                 logger.error('Task exception:', e.stack ? e.stack : e);
-                if(e.code != 403 || retry == RETRY_COUNT)
+                if (e.code != 403 || retry == RETRY_COUNT)
                     throw e;
             } finally {
                 if (ret) {
@@ -142,12 +155,12 @@ export class DTaskManager {
         }
     }
 
-    private async pickNode(desc: DTaskDesc): Promise<DTaskNode|null>{
+    private async pickNode(desc: DTaskDesc): Promise<DTaskNode | null> {
         // console.log("总节点数:", this.nodes)
         //let pickedCount = Number.MAX_SAFE_INTEGER;
         let picked = [] as DTaskNode[];
 
-        let onlineNum:number = 0;
+        let onlineNum: number = 0;
         for (let [_, node] of this.nodes) {
             if (!node.online) {
                 continue;
@@ -157,7 +170,7 @@ export class DTaskManager {
                 continue;
             }
             let count = desc.getCurrentCountForIp(node.ip);
-            if(count >= desc.concurrency)
+            if (count >= desc.concurrency)
                 continue;
             picked.push(node);
         }
@@ -166,23 +179,23 @@ export class DTaskManager {
         //     picked = [];
         // }
         logger.info(`Nodes: online(${onlineNum}), idle(${picked.length})`);
-        if(picked.length == 0) {
+        if (picked.length == 0) {
             logger.info('Node task status:')
-            for(let [_, _node] of this.nodes) {
+            for (let [_, _node] of this.nodes) {
                 logger.info('节点：', _node.ip, _node.current_task_count);
             }
             logger.info('IP task status:');
-            for(let [ip, stat] of desc.statMap){
+            for (let [ip, stat] of desc.statMap) {
                 logger.info('IP：', ip, stat.running, stat.lastRun, stat.banUntil);
             }
             return null;
         }
 
-        picked.sort((a, b)=>{
+        picked.sort((a, b) => {
             let sa = desc.getIpStat(a.ip);
             let sb = desc.getIpStat(b.ip);
             let diff = sa.lastRun - sb.lastRun;
-            if(diff != 0)
+            if (diff != 0)
                 return diff;
             return sa.running - sb.running;
         });
@@ -214,7 +227,7 @@ for (let name in config.tasks) {
 }
 
 setInterval(async () => {
-    try { 
+    try {
         logger.log('MemoryUsage:', JSON.stringify(process.memoryUsage()));
         logger.log(await mgr.stat());
     } catch (err) {
