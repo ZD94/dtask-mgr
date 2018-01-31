@@ -21,7 +21,7 @@ export class DTaskNode{
     current_task_count = 0;
     handle: INodeHandle|null;
     online: boolean;
-    sock: net.Socket;
+    sock?: net.Socket;
     refreshAt?: number;
 
     constructor(public id: string, options: {ip: string, concurrency?: number}){
