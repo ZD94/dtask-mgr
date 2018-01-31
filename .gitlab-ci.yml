@@ -6,7 +6,7 @@ variables:
   NPM_CACHE_DIR: /cache/build-cache/npmhash/
   JL_APP_DAEMON: "true"
   JL_APP_COMMAND: "node --max_old_space_size=4092 main.js -d >/data/log/nohup.out 2>&1"
-  JL_APP_BRANCH: release
+  JL_APP_PORT: 8080
 stages:
   - build
   - docker
@@ -55,15 +55,15 @@ deploy:master:
     name: dev
     url: https://l.jingli365.com
   variables:
-    JL_APP_POSTGRES: postgres://times:$PG_PASS_TEST@l.jingli365.com:15432/svr_dtask_mgr_master
     JL_APP_BRANCH: master
+    JL_APP_POSTGRES: postgres://times:$PG_PASS_TEST@l.jingli365.com:15432/svr_dtask_mgr_master
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
     - echo deploy to https://l.jingli365.com
-    - ssh test@l.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 14108:4000 -p15000:5000
+    - ssh test@l.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 8080 -p 14108:4000
 
 deploy:release:
   stage: deploy
@@ -74,11 +74,12 @@ deploy:release:
     name: release
     url: https://j.jingli365.com
   variables:
-    JL_APP_POSTGRES: postgres://test:$PG_PASS_TEST@dockerhost:15432/${CI_PROJECT_NAMESPACE}_${CI_PROJECT_NAME}_${CI_COMMIT_REF_SLUG}
+    JL_APP_BRANCH: release
+    JL_APP_POSTGRES: postgres://test:$PG_PASS_TEST@j.jingli365.com:5432/${CI_PROJECT_NAMESPACE}_${CI_PROJECT_NAME}_${CI_COMMIT_REF_SLUG}
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
     - echo deploy to https://j.jingli365.com
-    - ssh test@j.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 4108:4000 -p15000:5000
+    - ssh test@j.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 8080 -p 4108:4000
