@@ -75,7 +75,7 @@ deploy:release:
     url: https://j.jingli365.com
   variables:
     JL_APP_BRANCH: release
-    JL_APP_POSTGRES: postgres://test:$PG_PASS_TEST@j.jingli365.com:5432/${CI_PROJECT_NAMESPACE}_${CI_PROJECT_NAME}_${CI_COMMIT_REF_SLUG}
+    JL_APP_POSTGRES: postgres://jingli:J1n9L1.t3ch@j.jingli365.com:5432/dtaskmgr
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
