@@ -31,7 +31,7 @@ build:dist:
     paths:
       - dist/
   script:
-    - mkdir -p $NPM_CACHE_DIR/`npmhash`/node_modules && ln -s $NPM_CACHE_DIR/`npmhash`/node_modules .
+    # - mkdir -p $NPM_CACHE_DIR/`npmhash`/node_modules && ln -s $NPM_CACHE_DIR/`npmhash`/node_modules .
     - echo `npmhash`
     - npm install
     - npm run dist
