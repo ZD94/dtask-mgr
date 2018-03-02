@@ -8,6 +8,8 @@ var outputLogger = new Logger("output");
 let config = require('@jingli/config');
 // import taskRecord from './task-record';
 
+const HEART_BEAT = 5 * 1000;
+
 export interface registerNodeParam {
     id: string;
     ip: string;
@@ -91,8 +93,18 @@ export class DTaskManager {
         let node = this.nodes.get(params.id);
         if (!node)
             return;
-        node.refreshAt = params.refreshAt;
+        node.refreshAt = Date.now();
+        node.online = true;
         return 'ok';
+    }
+
+    markOfflineNodes() {
+        let now = Date.now();
+        for (let [_, node] of this.nodes) {
+            if (node.refreshAt + HEART_BEAT * 2 < now) {
+                node.online = false;
+            }
+        }
     }
 
     async runTask(params: { name: string, input: any }): Promise<any> {
@@ -225,6 +237,16 @@ for (let name in config.tasks) {
         }
     });
 }
+
+setInterval(async () => {
+    mgr.markOfflineNodes();
+    try {
+        logger.log('MemoryUsage:', JSON.stringify(process.memoryUsage()));
+        logger.log(await mgr.stat());
+    } catch (err) {
+        logger.error(err.stack ? err.stack : err);
+    }
+}, HEART_BEAT);
 
 setInterval(async () => {
     try {
