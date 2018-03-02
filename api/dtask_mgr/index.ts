@@ -240,12 +240,6 @@ for (let name in config.tasks) {
 
 setInterval(async () => {
     mgr.markOfflineNodes();
-    try {
-        logger.log('MemoryUsage:', JSON.stringify(process.memoryUsage()));
-        logger.log(await mgr.stat());
-    } catch (err) {
-        logger.error(err.stack ? err.stack : err);
-    }
 }, HEART_BEAT);
 
 setInterval(async () => {
