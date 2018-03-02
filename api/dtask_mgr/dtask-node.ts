@@ -22,7 +22,7 @@ export class DTaskNode{
     handle: INodeHandle|null;
     online: boolean;
     sock?: net.Socket;
-    refreshAt?: number;
+    refreshAt: number = 0;
 
     constructor(public id: string, options: {ip: string, concurrency?: number}){
         this.ip = options.ip;
