@@ -57,6 +57,8 @@ deploy:master:
   variables:
     JL_APP_BRANCH: master
     JL_APP_POSTGRES: postgres://times:$PG_PASS_TEST@l.jingli365.com:15432/svr_dtask_mgr_master
+    JL_APP_ALI_WEBTRACK_URL: http://jl-data-stat.cn-beijing.log.aliyuncs.com/logstores/jl-data-stat/track
+    JL_APP_SERVER_TYPE: development-serve
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
@@ -76,6 +78,8 @@ deploy:release:
   variables:
     JL_APP_BRANCH: release
     JL_APP_POSTGRES: postgres://jingli:J1n9L1.t3ch@j.jingli365.com:5432/dtaskmgr
+    JL_APP_ALI_WEBTRACK_URL: http://jl-data-stat.cn-beijing.log.aliyuncs.com/logstores/jl-data-stat/track
+    JL_APP_SERVER_TYPE: release-serve
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME

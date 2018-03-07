@@ -1,12 +1,25 @@
-
 import * as net from 'net';
-import { DTaskNode, INodeHandle } from './dtask-node';
-import { DTaskDesc, TaskParams } from './dtask-desc';
+import {DTaskNode, INodeHandle} from './dtask-node';
+import {DTaskDesc, TaskParams} from './dtask-desc';
 import Logger from "@jingli/logger";
+
 var logger = new Logger("dtask-mgr");
 var outputLogger = new Logger("output");
 let config = require('@jingli/config');
+import * as request from "request-promise";
+
 // import taskRecord from './task-record';
+
+export enum EOperationStatus {
+    BEFORE_PROCESS = 'BEFORE_PROCESS',
+    PROCESSING = 'PROCESSING',
+    SUCCESS = 'CRAWL-SUCCESS',
+    FAIL = 'CRAWL-FAIL',
+    CACHE = 'CACHE-SUCCESS',
+    FULL = 'FULL-SUCCESS',
+    FINAL = 'FINAL-SUCCESS',
+    EMPTY = 'EMPTY'
+}
 
 const HEART_BEAT = 5 * 1000;
 
@@ -46,6 +59,14 @@ export class DTaskManager {
             ret.push(await node.stat());
         }
         return ret.join('\n');
+    }
+
+    async getConnectionIp() {
+        let connectionIp = [] as string[];
+        for (let [_, node] of this.nodes) {
+            connectionIp.push(await node.stat());
+        }
+        return connectionIp
     }
 
     async statNumber(): Promise<any> {
@@ -137,7 +158,19 @@ export class DTaskManager {
                 if (!node) {
                     throw new Error('No available node for task: ' + params.name);
                 }
+                let time = Date.now();
                 ret = await node.runTask(desc, params.input);
+
+
+                await this.setWebTrackEndPoint({
+                    "__topic__": config.serverType,
+                    "project": "dtask-mgr",
+                    "eventName": params.name,
+                    "operationStatus": ret.data && ret.data.length ? EOperationStatus.SUCCESS : EOperationStatus.EMPTY,
+                    "searchCondition": JSON.stringify(params.input),
+                    "duration": Date.now() - time,
+                    "ConnectionIp":await this.getConnectionIp()
+                })
                 // try {
                 //     await taskRecord.finishTask({
                 //         id: logId,
@@ -155,6 +188,14 @@ export class DTaskManager {
                 //     status: -1,
                 //     result: e.stack,
                 // });
+                await this.setWebTrackEndPoint({
+                    "__topic__": config.serviceType,
+                    "project": "dtask-mgr",
+                    "eventName": params.name,
+                    "memoryUsage": JSON.stringify(process.memoryUsage()),
+                    "searchCondition": JSON.stringify(params.input),
+                    "operationStatus": EOperationStatus.FAIL,
+                });
                 logger.error('Task exception:', e.stack ? e.stack : e);
                 if (e.code != 403 || retry == RETRY_COUNT)
                     throw e;
@@ -164,6 +205,30 @@ export class DTaskManager {
                     outputLogger.info('Task output:', JSON.stringify(ret, null, '  '));
                 }
             }
+        }
+    }
+
+     async setWebTrackEndPoint(params: any) {
+        let qs = {
+            "APIVersion": "0.6.0"
+        }
+        for (let key in params) {
+            qs[key] = params[key]
+        }
+        try {
+            let result = await request({
+                uri: config.aliWebTrackUrl,
+                qs,
+                json: true,
+                method: "GET"
+            });
+            if (typeof result == "string") {
+                result = JSON.parse(result);
+            }
+            return result
+        } catch (e) {
+            console.log(e);
+            return
         }
     }
 
@@ -244,6 +309,11 @@ setInterval(async () => {
 
 setInterval(async () => {
     try {
+        await mgr.setWebTrackEndPoint({
+            "__topic__": config.serverType,
+            "project": "dtask-mgr",
+            "memoryUsage" : process.memoryUsage()
+        })
         logger.log('MemoryUsage:', JSON.stringify(process.memoryUsage()));
         logger.log(await mgr.stat());
     } catch (err) {
