@@ -97,5 +97,7 @@
       "prog": "dk.jingli365.com/dtasks-kiwi-flight",
       "version": "${JL_APP_BRANCH}"
     }
-  }
+  },
+  "aliWebTrackUrl": "${JL_APP_ALI_WEBTRACK_URL}",
+  "serverType": "${JL_APP_SERVER_TYPE}"
 }
