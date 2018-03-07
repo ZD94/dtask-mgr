@@ -33,7 +33,7 @@
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "ts-node": "^3.0.2",
-    "tslib": "^1.7.1",
+    "tslib": "1.7.1",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
