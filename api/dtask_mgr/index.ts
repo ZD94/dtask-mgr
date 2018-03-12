@@ -167,6 +167,7 @@ export class DTaskManager {
                     "project": "dtask-mgr",
                     "dockerName": params.name,
                     "eventName": "DockersReturn",
+                    "dataLength": ret && ret.length,
                     "operationStatus": ret && ret.length ? EOperationStatus.SUCCESS : EOperationStatus.EMPTY,
                     "searchCondition": JSON.stringify(params.input),
                     "duration": Date.now() - time
