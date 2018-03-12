@@ -1,6 +1,6 @@
 import * as net from 'net';
-import {DTaskNode, INodeHandle} from './dtask-node';
-import {DTaskDesc, TaskParams} from './dtask-desc';
+import { DTaskNode, INodeHandle } from './dtask-node';
+import { DTaskDesc, TaskParams } from './dtask-desc';
 import Logger from "@jingli/logger";
 
 var logger = new Logger("dtask-mgr");
@@ -165,11 +165,11 @@ export class DTaskManager {
                 await this.setWebTrackEndPoint({
                     "__topic__": config.serverType,
                     "project": "dtask-mgr",
-                    "eventName": params.name,
-                    "operationStatus": ret.data && ret.data.length ? EOperationStatus.SUCCESS : EOperationStatus.EMPTY,
+                    "dockerName": params.name,
+                    "eventName": "DockersReturn",
+                    "operationStatus": ret && ret.length ? EOperationStatus.SUCCESS : EOperationStatus.EMPTY,
                     "searchCondition": JSON.stringify(params.input),
-                    "duration": Date.now() - time,
-                    "ConnectionIp":await this.getConnectionIp()
+                    "duration": Date.now() - time
                 })
                 // try {
                 //     await taskRecord.finishTask({
@@ -191,10 +191,11 @@ export class DTaskManager {
                 await this.setWebTrackEndPoint({
                     "__topic__": config.serviceType,
                     "project": "dtask-mgr",
-                    "eventName": params.name,
-                    "memoryUsage": JSON.stringify(process.memoryUsage()),
+                    "dockerName": params.name,
+                    "eventName": "DockersReturn",
                     "searchCondition": JSON.stringify(params.input),
                     "operationStatus": EOperationStatus.FAIL,
+                    "dockerErrorReason": (e.message || e).substring(0, 300)
                 });
                 logger.error('Task exception:', e.stack ? e.stack : e);
                 if (e.code != 403 || retry == RETRY_COUNT)
@@ -208,7 +209,7 @@ export class DTaskManager {
         }
     }
 
-     async setWebTrackEndPoint(params: any) {
+    async setWebTrackEndPoint(params: any) {
         let qs = {
             "APIVersion": "0.6.0"
         }
@@ -312,7 +313,9 @@ setInterval(async () => {
         await mgr.setWebTrackEndPoint({
             "__topic__": config.serverType,
             "project": "dtask-mgr",
-            "memoryUsage" : process.memoryUsage()
+            "memoryUsage": process.memoryUsage(),
+            "ConnectionIp": await mgr.getConnectionIp()
+
         })
         logger.log('MemoryUsage:', JSON.stringify(process.memoryUsage()));
         logger.log(await mgr.stat());
