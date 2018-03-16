@@ -160,7 +160,10 @@ export class DTaskManager {
                 }
                 let time = Date.now();
                 ret = await node.runTask(desc, params.input);
-
+                if (!ret.length) {
+                    console.error("task get emty: ", params.name, params.input);
+                    throw new Error("task get emty: ");
+                }
 
                 await this.setWebTrackEndPoint({
                     "__topic__": config.serverType,
